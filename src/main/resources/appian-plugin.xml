@@ -1,0 +1,17 @@
+<appian-plugin name="LCM Connected System - Twilio" key="com.lcm.twilio">
+
+  <plugin-info>
+    <description>LCM Connected System - Twilio</description>
+    <vendor name="Low Code Minds" url="www.lowcodeminds.com" />
+    <version>1.0.0</version>
+    <application-version min="23.3" />
+  </plugin-info>
+
+  <connected-system-template key="TwilioConnectedSystemTemplate" name="TwilioConnectedSystemTemplate"
+                             class="com.lcm.twilio.templates.TwilioConnectedSystemTemplate">
+
+    <integration-template key="SMSIntegrationTemplate" name="SMSIntegrationTemplate"
+                          class="com.lcm.twilio.templates.SMSIntegrationTemplate" />
+
+  </connected-system-template>
+</appian-plugin>
