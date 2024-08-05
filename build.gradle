@@ -9,7 +9,14 @@ repositories {
 dependencies {
   compileOnly 'com.appian:connected-systems-core:1.2.0'
   implementation 'com.appian:connected-systems-client:1.1.0'
-  implementation 'com.twilio.sdk:twilio:8.8.0'
+  implementation 'com.twilio.sdk:twilio:10.4.1'
+  implementation 'com.fasterxml.jackson.core:jackson-core:2.17.2'
+  implementation 'com.fasterxml.jackson.core:jackson-annotations:2.17.2'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
+  implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.17.2'
+  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2'
+  implementation 'org.slf4j:slf4j-api:2.0.13'
+  testImplementation 'org.slf4j:slf4j-nop:2.0.13'
   testImplementation 'com.appian:connected-systems-core:1.2.0'
 }
 
