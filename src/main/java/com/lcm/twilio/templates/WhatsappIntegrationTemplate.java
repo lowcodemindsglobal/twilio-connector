@@ -1,8 +1,5 @@
 package com.lcm.twilio.templates;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.appian.connectedsystems.simplified.sdk.SimpleIntegrationTemplate;
 import com.appian.connectedsystems.simplified.sdk.configuration.SimpleConfiguration;
 import com.appian.connectedsystems.templateframework.sdk.ExecutionContext;
@@ -12,13 +9,16 @@ import com.appian.connectedsystems.templateframework.sdk.TemplateId;
 import com.appian.connectedsystems.templateframework.sdk.configuration.PropertyPath;
 import com.appian.connectedsystems.templateframework.sdk.diagnostics.IntegrationDesignerDiagnostic;
 import com.twilio.Twilio;
-import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.exception.ApiException;
+import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 
+import java.util.HashMap;
+import java.util.Map;
+
 // Must provide an integration id. This value need only be unique for this connected system
-@TemplateId(name="SMSIntegrationTemplate")
-public class SMSIntegrationTemplate extends SimpleIntegrationTemplate {
+@TemplateId(name="WhatsappIntegrationTemplate")
+public class WhatsappIntegrationTemplate extends SimpleIntegrationTemplate {
 
   public static final String MESSAGE = "msg";
   public static final String FROM = "from";
@@ -58,8 +58,8 @@ public class SMSIntegrationTemplate extends SimpleIntegrationTemplate {
       String accountSID = connectedSystemConfiguration.getValue(TwilioConnectedSystemTemplate.ACCOUNT_SID);
       String authToken = connectedSystemConfiguration.getValue(TwilioConnectedSystemTemplate.AUTH_TOKEN);
       String messageBody = integrationConfiguration.getValue(MESSAGE);
-      String from = integrationConfiguration.getValue(FROM);
-      String to = integrationConfiguration.getValue(TO);
+      String from = "whatsapp:"+integrationConfiguration.getValue(FROM);
+      String to = "whatsapp:"+integrationConfiguration.getValue(TO);
 
 //      requestDiagnostic.put("accountSID", accountSID);
 //      requestDiagnostic.put("authToken", authToken);

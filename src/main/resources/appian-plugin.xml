@@ -12,6 +12,7 @@
 
     <integration-template key="SMSIntegrationTemplate" name="SMSIntegrationTemplate"
                           class="com.lcm.twilio.templates.SMSIntegrationTemplate" />
-
+    <integration-template key="WhatsappIntegrationTemplate" name="WhatsappIntegrationTemplate"
+                          class="com.lcm.twilio.templates.WhatsappIntegrationTemplate" />
   </connected-system-template>
 </appian-plugin>
