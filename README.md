@@ -161,4 +161,4 @@ The integration provides diagnostic information including:
 ## References
 
 - [Twilio API Documentation](https://www.twilio.com/docs/usage/api)
-- [Appian Connected Systems Documentation](https://docs.appian.com/suite/help/latest/Connected_Systems.html)
+- [Appian Connected Systems Documentation](https://docs.appian.com/suite/help/24.2/connected-system-plug-in-landing.html)
