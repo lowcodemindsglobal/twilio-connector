@@ -6,10 +6,10 @@ import com.twilio.type.PhoneNumber;
 
 public class SMSTest {
     public static void main(String[] args){
-        String accountSID ="";
-        String authToken ="";
-        String from = "";
-        String to ="";
+        String accountSID ="ACd7c17456bace5bc27bc468918695286c";
+        String authToken ="faa97fe61f8dee34b195e39d5171ad56";
+        String from = "+16283458401";
+        String to ="+917871222941";
         String msg ="hi from sangeerththan";
 
         Twilio.init(accountSID, authToken);
