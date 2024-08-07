@@ -15,7 +15,7 @@ public class Test {
         // Fetch messages for a specific phone number
         String phoneNumber = "+917871222941"; // Replace with your phone number
         ResourceSet<Message> messages = Message.reader()
-                .setTo(new com.twilio.type.PhoneNumber(phoneNumber))
+                .setTo(new com.twilio.type.PhoneNumber("whatsapp:"+phoneNumber))
                 .limit(10) // Adjust the limit as needed
                 .read();
 
