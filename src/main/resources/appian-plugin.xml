@@ -16,5 +16,7 @@
                           class="com.lcm.twilio.templates.whatsapp.WhatsappIntegrationTemplate" />
     <integration-template key="ReceiveSMSIntegrationTemplate" name="ReceiveSMSIntegrationTemplate"
                           class="com.lcm.twilio.templates.sms.ReceiveSMSIntegrationTemplate" />
+    <integration-template key="ReceiveWhatsappMessage" name="ReceiveWhatsappMessage"
+                          class="com.lcm.twilio.templates.whatsapp.ReceiveWhatsappMessage" />
   </connected-system-template>
 </appian-plugin>
