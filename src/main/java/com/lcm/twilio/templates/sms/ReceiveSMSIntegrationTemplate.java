@@ -3,6 +3,7 @@ package com.lcm.twilio.templates.sms;
 import com.appian.connectedsystems.simplified.sdk.SimpleIntegrationTemplate;
 import com.appian.connectedsystems.simplified.sdk.configuration.SimpleConfiguration;
 import com.appian.connectedsystems.templateframework.sdk.ExecutionContext;
+import com.appian.connectedsystems.templateframework.sdk.IntegrationError;
 import com.appian.connectedsystems.templateframework.sdk.IntegrationResponse;
 import com.appian.connectedsystems.templateframework.sdk.TemplateId;
 import com.appian.connectedsystems.templateframework.sdk.configuration.PropertyPath;
@@ -14,16 +15,17 @@ import com.twilio.exception.ApiException;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static com.lcm.twilio.templates.utils.Utility.buildErrorResponse;
 
 @TemplateId(name = "ReceiveSMSIntegrationTemplate")
 public  class ReceiveSMSIntegrationTemplate extends SimpleIntegrationTemplate {
 
   public static final String TO = "to";
-  public static final String LIMIT = "10";
+  public static final String LIMIT = "limit";
 
 
 
@@ -70,13 +72,20 @@ public  class ReceiveSMSIntegrationTemplate extends SimpleIntegrationTemplate {
               .setTo(new PhoneNumber(to))
               .limit(noOfMessages) // Adjust the limit as needed
               .read();
-
+      List<Map<String, Object>> messagesList = new ArrayList<>();
       for (Message message : messages) {
-        result.put("message" , message);
+        Map<String, Object> messageMap = new HashMap<>();
+        messageMap.put("messageBody", message.getBody());
+        messageMap.put("status",message.getStatus());
+        messageMap.put("sid", message.getSid());
+        messageMap.put("from",message.getFrom().toString());
+        messageMap.put("to",message.getTo());
+        messageMap.put("dateSent",message.getDateSent().toString());
+        messagesList.add(messageMap);
       }
-      final long end = System.currentTimeMillis();
+      result.put("Messages",messagesList);
 
-      // Add execution time to diagnostics
+      final long end = System.currentTimeMillis();
       final long executionTime = end - start;
       final IntegrationDesignerDiagnostic diagnostic = IntegrationDesignerDiagnostic.builder()
               .addExecutionTimeDiagnostic(executionTime)
@@ -94,4 +103,14 @@ public  class ReceiveSMSIntegrationTemplate extends SimpleIntegrationTemplate {
     }
   }
 
+  private IntegrationResponse buildErrorResponse(String title, String message, Map<String, Object> requestDiagnostic) {
+    IntegrationError error = IntegrationError.builder()
+            .title(title)
+            .message(message)
+            .build();
+    IntegrationDesignerDiagnostic diagnostic = IntegrationDesignerDiagnostic.builder()
+            .addRequestDiagnostic(requestDiagnostic)
+            .build();
+    return IntegrationResponse.forError(error).withDiagnostic(diagnostic).build();
+  }
 }
