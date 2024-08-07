@@ -1,27 +1,33 @@
-package com.lcm.twilio.templates;
+package com.lcm.twilio.templates.sms;
 
 import com.appian.connectedsystems.simplified.sdk.SimpleIntegrationTemplate;
 import com.appian.connectedsystems.simplified.sdk.configuration.SimpleConfiguration;
 import com.appian.connectedsystems.templateframework.sdk.ExecutionContext;
+import com.appian.connectedsystems.templateframework.sdk.IntegrationError;
 import com.appian.connectedsystems.templateframework.sdk.IntegrationResponse;
+import com.appian.connectedsystems.templateframework.sdk.TemplateId;
 import com.appian.connectedsystems.templateframework.sdk.configuration.PropertyPath;
 import com.appian.connectedsystems.templateframework.sdk.diagnostics.IntegrationDesignerDiagnostic;
+import com.lcm.twilio.templates.TwilioConnectedSystemTemplate;
 import com.twilio.Twilio;
+import com.twilio.base.ResourceSet;
 import com.twilio.exception.ApiException;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import static com.lcm.twilio.templates.utils.Utility.buildErrorResponse;
 
-public abstract class TwilioIntegrationTemplate extends SimpleIntegrationTemplate {
 
-  public static final String MESSAGE = "msg";
-  public static final String FROM = "from";
+@TemplateId(name = "ReceiveSMSIntegrationTemplate")
+public  class ReceiveSMSIntegrationTemplate extends SimpleIntegrationTemplate {
+
   public static final String TO = "to";
+  public static final String LIMIT = "limit";
 
-  protected abstract String getMessagePrefix();
+
 
   @Override
   protected SimpleConfiguration getConfiguration(
@@ -30,17 +36,13 @@ public abstract class TwilioIntegrationTemplate extends SimpleIntegrationTemplat
           PropertyPath propertyPath,
           ExecutionContext executionContext) {
     return integrationConfiguration.setProperties(
-            textProperty(MESSAGE).label("Message")
-                    .isRequired(true)
-                    .description("Message to be sent via Twilio")
-                    .build(),
-            textProperty(FROM).label("From Number")
-                    .isRequired(true)
-                    .description("Phone number from which the message is sent")
-                    .build(),
             textProperty(TO).label("To Number")
                     .isRequired(true)
-                    .description("Phone number to which the message is sent")
+                    .description("The phone number to which the messages are received")
+                    .build(),
+            integerProperty(LIMIT).label("Message Limit")
+                    .isRequired(true)
+                    .description("Total Number of messages to receive")
                     .build()
     );
   }
@@ -56,31 +58,34 @@ public abstract class TwilioIntegrationTemplate extends SimpleIntegrationTemplat
     try {
       String accountSID = connectedSystemConfiguration.getValue(TwilioConnectedSystemTemplate.ACCOUNT_SID);
       String authToken = connectedSystemConfiguration.getValue(TwilioConnectedSystemTemplate.AUTH_TOKEN);
-      String messageBody = integrationConfiguration.getValue(MESSAGE);
+      String to = integrationConfiguration.getValue(TO);
+      int noOfMessages = integrationConfiguration.getValue(LIMIT);
 
-      // Based on prefix integrations will be sms or whatsapp msg
-      String from = getMessagePrefix() + integrationConfiguration.getValue(FROM);
-      String to = getMessagePrefix() + integrationConfiguration.getValue(TO);
-
-      requestDiagnostic.put("messageBody", messageBody);
-      requestDiagnostic.put("from", from);
       requestDiagnostic.put("to", to);
 
       // Initialize Twilio client
       Twilio.init(accountSID, authToken);
 
-      // Send the message
+      // Receive the messages
       final long start = System.currentTimeMillis();
-      Message message = Message.creator(new PhoneNumber(to), new PhoneNumber(from), messageBody).create();
+      ResourceSet<Message> messages = Message.reader()
+              .setTo(new PhoneNumber(to))
+              .limit(noOfMessages) // Adjust the limit as needed
+              .read();
+      List<Map<String, Object>> messagesList = new ArrayList<>();
+      for (Message message : messages) {
+        Map<String, Object> messageMap = new HashMap<>();
+        messageMap.put("messageBody", message.getBody());
+        messageMap.put("status",message.getStatus());
+        messageMap.put("sid", message.getSid());
+        messageMap.put("from",message.getFrom().toString());
+        messageMap.put("to",message.getTo());
+        messageMap.put("dateSent",message.getDateSent().toString());
+        messagesList.add(messageMap);
+      }
+      result.put("Messages",messagesList);
+
       final long end = System.currentTimeMillis();
-
-      // Collect results
-      result.put("messageSID", message.getSid());
-      result.put("status", message.getStatus());
-      result.put("from", from);
-      result.put("to", to);
-
-      // Add execution time to diagnostics
       final long executionTime = end - start;
       final IntegrationDesignerDiagnostic diagnostic = IntegrationDesignerDiagnostic.builder()
               .addExecutionTimeDiagnostic(executionTime)
@@ -98,4 +103,14 @@ public abstract class TwilioIntegrationTemplate extends SimpleIntegrationTemplat
     }
   }
 
+  private IntegrationResponse buildErrorResponse(String title, String message, Map<String, Object> requestDiagnostic) {
+    IntegrationError error = IntegrationError.builder()
+            .title(title)
+            .message(message)
+            .build();
+    IntegrationDesignerDiagnostic diagnostic = IntegrationDesignerDiagnostic.builder()
+            .addRequestDiagnostic(requestDiagnostic)
+            .build();
+    return IntegrationResponse.forError(error).withDiagnostic(diagnostic).build();
+  }
 }

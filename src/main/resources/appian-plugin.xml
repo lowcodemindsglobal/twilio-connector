@@ -11,8 +11,10 @@
                              class="com.lcm.twilio.templates.TwilioConnectedSystemTemplate">
 
     <integration-template key="SMSIntegrationTemplate" name="SMSIntegrationTemplate"
-                          class="com.lcm.twilio.templates.SMSIntegrationTemplate" />
+                          class="com.lcm.twilio.templates.sms.SMSIntegrationTemplate" />
     <integration-template key="WhatsappIntegrationTemplate" name="WhatsappIntegrationTemplate"
-                          class="com.lcm.twilio.templates.WhatsappIntegrationTemplate" />
+                          class="com.lcm.twilio.templates.whatsapp.WhatsappIntegrationTemplate" />
+    <integration-template key="ReceiveSMSIntegrationTemplate" name="ReceiveSMSIntegrationTemplate"
+                          class="com.lcm.twilio.templates.sms.ReceiveSMSIntegrationTemplate" />
   </connected-system-template>
 </appian-plugin>

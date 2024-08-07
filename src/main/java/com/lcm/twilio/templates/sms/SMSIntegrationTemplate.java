@@ -1,6 +1,7 @@
-package com.lcm.twilio.templates;
+package com.lcm.twilio.templates.sms;
 
 import com.appian.connectedsystems.templateframework.sdk.TemplateId;
+import com.lcm.twilio.templates.TwilioIntegrationTemplate;
 
 @TemplateId(name = "SMSIntegrationTemplate")
 public class SMSIntegrationTemplate extends TwilioIntegrationTemplate {
