@@ -1,4 +1,4 @@
-# Twilio Appian Connected System Plugin
+# Twilio Appian Connected System Plugin [![Java CI with Gradle](https://github.com/lowcodemindsglobal/twilio-connector/actions/workflows/gradle.yml/badge.svg?event=push)](https://github.com/lowcodemindsglobal/twilio-connector/actions/workflows/gradle.yml)
 
 ## Overview
 
