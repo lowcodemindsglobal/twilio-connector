@@ -21,15 +21,11 @@ public class TwilioConnectedSystemTemplate extends SimpleConnectedSystemTemplate
             encryptedTextProperty(ACCOUNT_SID)
                     .label("Account SID")
                     .description("Account SID for Twilio")
-                    .isRequired(true)
-                    .isImportCustomizable(true)
-                    .build(),
+                    .isRequired(true).isImportCustomizable(true).build(),
             encryptedTextProperty(AUTH_TOKEN)
                     .label("Auth Token")
                     .description("Auth Token for Twilio")
-                    .isRequired(true)
-                    .isImportCustomizable(true)
-                    .build()
+                    .isRequired(true).isImportCustomizable(true).build()
     );
   }
 

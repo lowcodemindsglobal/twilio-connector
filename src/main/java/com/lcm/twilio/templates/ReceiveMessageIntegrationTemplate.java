@@ -3,7 +3,6 @@ package com.lcm.twilio.templates;
 import com.appian.connectedsystems.simplified.sdk.SimpleIntegrationTemplate;
 import com.appian.connectedsystems.simplified.sdk.configuration.SimpleConfiguration;
 import com.appian.connectedsystems.templateframework.sdk.ExecutionContext;
-import com.appian.connectedsystems.templateframework.sdk.IntegrationError;
 import com.appian.connectedsystems.templateframework.sdk.IntegrationResponse;
 import com.appian.connectedsystems.templateframework.sdk.TemplateId;
 import com.appian.connectedsystems.templateframework.sdk.configuration.PropertyPath;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import static com.lcm.twilio.templates.utils.Utility.buildErrorResponse;
 
 @TemplateId(name = "ReceiveMessageIntegrationTemplate")
 public  abstract class ReceiveMessageIntegrationTemplate extends SimpleIntegrationTemplate {
@@ -103,14 +102,4 @@ public  abstract class ReceiveMessageIntegrationTemplate extends SimpleIntegrati
         }
     }
 
-    private IntegrationResponse buildErrorResponse(String title, String message, Map<String, Object> requestDiagnostic) {
-        IntegrationError error = IntegrationError.builder()
-                .title(title)
-                .message(message)
-                .build();
-        IntegrationDesignerDiagnostic diagnostic = IntegrationDesignerDiagnostic.builder()
-                .addRequestDiagnostic(requestDiagnostic)
-                .build();
-        return IntegrationResponse.forError(error).withDiagnostic(diagnostic).build();
-    }
 }
