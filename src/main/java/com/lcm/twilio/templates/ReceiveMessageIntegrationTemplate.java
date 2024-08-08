@@ -37,11 +37,11 @@ public  abstract class ReceiveMessageIntegrationTemplate extends SimpleIntegrati
             ExecutionContext executionContext) {
         return integrationConfiguration.setProperties(
                 textProperty(TO).label("To Number")
-                        .isRequired(true)
+                        .isRequired(true).isExpressionable(true)
                         .description("The phone number to which the messages are received")
                         .build(),
                 integerProperty(LIMIT).label("Message Limit")
-                        .isRequired(true)
+                        .isRequired(true).isExpressionable(true)
                         .description("Total Number of messages to receive")
                         .build()
         );

@@ -31,15 +31,15 @@ public abstract class TwilioIntegrationTemplate extends SimpleIntegrationTemplat
           ExecutionContext executionContext) {
     return integrationConfiguration.setProperties(
             textProperty(MESSAGE).label("Message")
-                    .isRequired(true)
+                    .isRequired(true).isExpressionable(true)
                     .description("Message to be sent via Twilio")
                     .build(),
             textProperty(FROM).label("From Number")
-                    .isRequired(true)
+                    .isRequired(true).isExpressionable(true)
                     .description("Phone number from which the message is sent")
                     .build(),
             textProperty(TO).label("To Number")
-                    .isRequired(true)
+                    .isRequired(true).isExpressionable(true)
                     .description("Phone number to which the message is sent")
                     .build()
     );
@@ -75,10 +75,11 @@ public abstract class TwilioIntegrationTemplate extends SimpleIntegrationTemplat
       final long end = System.currentTimeMillis();
 
       // Collect results
-      result.put("messageSID", message.getSid());
-      result.put("status", message.getStatus());
       result.put("from", from);
       result.put("to", to);
+      result.put("message",message.getBody());
+      result.put("messageSID", message.getSid());
+      result.put("status", message.getStatus());
 
       // Add execution time to diagnostics
       final long executionTime = end - start;
