@@ -14,7 +14,8 @@ import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import java.util.HashMap;
 import java.util.Map;
-import static com.lcm.twilio.templates.utils.Utility.buildErrorResponse;
+
+import static com.lcm.twilio.templates.utils.Utility.*;
 
 @TemplateId(name = "SendWhatsappMessageWithAttachment")
 public class SendWhatsappMessageWithAttachment extends TwilioIntegrationTemplate {
@@ -36,75 +37,54 @@ public class SendWhatsappMessageWithAttachment extends TwilioIntegrationTemplate
             PropertyPath propertyPath,
             ExecutionContext executionContext) {
         return integrationConfiguration.setProperties(
-                        textProperty(MESSAGE).label("Message")
-                                .isRequired(true).isExpressionable(true)
-                                .description("Message to be sent via Twilio")
-                                .build(),
-                        textProperty(FROM).label("From Number")
-                                .isRequired(true).isExpressionable(true)
-                                .description("Phone number from which the message is sent")
-                                .build(),
-                        textProperty(TO).label("To Number")
-                                .isRequired(true).isExpressionable(true)
-                                .description("Phone number to which the message is sent")
-                                .build(),
-                        textProperty(MEDIA_URL).label("Media URL")
-                                .isRequired(false).isExpressionable(true)
-                                .description("URL of the media to be attached to the message")
-                                .build()
-                );
+                textProperty(MESSAGE).label("Message")
+                        .isRequired(true).isExpressionable(true)
+                        .description("Message to be sent via Twilio")
+                        .build(),
+                textProperty(FROM).label("From Number")
+                        .isRequired(true).isExpressionable(true)
+                        .description("Phone number from which the message is sent")
+                        .build(),
+                textProperty(TO).label("To Number")
+                        .isRequired(true).isExpressionable(true)
+                        .description("Phone number to which the message is sent")
+                        .build(),
+                textProperty(MEDIA_URL).label("Media URL")
+                        .isRequired(false).isExpressionable(true)
+                        .description("URL of the media to be attached to the message")
+                        .build()
+        );
     }
+
     @Override
     protected IntegrationResponse execute(
             SimpleConfiguration integrationConfiguration,
             SimpleConfiguration connectedSystemConfiguration,
             ExecutionContext executionContext) {
         Map<String, Object> requestDiagnostic = new HashMap<>();
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result;
 
         try {
             String accountSID = connectedSystemConfiguration.getValue(TwilioConnectedSystemTemplate.ACCOUNT_SID);
             String authToken = connectedSystemConfiguration.getValue(TwilioConnectedSystemTemplate.AUTH_TOKEN);
             String messageBody = integrationConfiguration.getValue(MESSAGE);
-
-            // Based on prefix integrations will be sms or whatsapp msg
             String from = getMessagePrefix() + integrationConfiguration.getValue(FROM);
             String to = getMessagePrefix() + integrationConfiguration.getValue(TO);
             String mediaUrl = integrationConfiguration.getValue(MEDIA_URL);
 
-            requestDiagnostic.put("messageBody", messageBody);
-            requestDiagnostic.put("from", from);
-            requestDiagnostic.put("to", to);
-            requestDiagnostic.put("mediaUrl", mediaUrl);
+            requestDiagnostic = createRequestDiagnosticWithMedia(messageBody,from,to,mediaUrl);
 
             // Initialize Twilio client
             Twilio.init(accountSID, authToken);
             final long start = System.currentTimeMillis();
-            // Create and send the message
-            Message message;
-            if (mediaUrl != null && !mediaUrl.isEmpty()) {
-                message = Message.creator(
-                                new PhoneNumber(to),         // To number
-                                new PhoneNumber(from),       // From number
-                                messageBody                  // Message body
-                        )
-                        .setMediaUrl(mediaUrl) // Set media URL
-                        .create();                       // Create and send message
-            } else {
-                message = Message.creator(
-                        new PhoneNumber(to),         // To number
-                        new PhoneNumber(from),       // From number
-                        messageBody                  // Message body
-                ).create();                       // Create and send message
-            }
+
+            // Create and send the message with or without attachment
+            Message message = Message.creator(new PhoneNumber(to), new PhoneNumber(from), messageBody)
+                    .setMediaUrl(mediaUrl != null && !mediaUrl.isEmpty() ? mediaUrl : null)
+                    .create();
 
             // Collect results
-            result.put("from", from);
-            result.put("to", to);
-            result.put("message", message.getBody());
-            result.put("messageSID", message.getSid());
-            result.put("numMedia",message.getNumMedia());
-            result.put("status", message.getStatus());
+            result = createResultMap(from,to,message);
 
             // Add execution time to diagnostics
             final long executionTime = System.currentTimeMillis() - start;
