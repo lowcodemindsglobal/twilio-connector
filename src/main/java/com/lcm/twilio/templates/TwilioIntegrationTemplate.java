@@ -13,7 +13,8 @@ import com.twilio.type.PhoneNumber;
 
 import java.util.HashMap;
 import java.util.Map;
-import static com.lcm.twilio.templates.utils.Utility.buildErrorResponse;
+
+import static com.lcm.twilio.templates.utils.Utility.*;
 
 public abstract class TwilioIntegrationTemplate extends SimpleIntegrationTemplate {
 
@@ -51,7 +52,7 @@ public abstract class TwilioIntegrationTemplate extends SimpleIntegrationTemplat
           SimpleConfiguration connectedSystemConfiguration,
           ExecutionContext executionContext) {
     Map<String, Object> requestDiagnostic = new HashMap<>();
-    Map<String, Object> result = new HashMap<>();
+    Map<String, Object> result;
 
     try {
       String accountSID = connectedSystemConfiguration.getValue(TwilioConnectedSystemTemplate.ACCOUNT_SID);
@@ -62,11 +63,7 @@ public abstract class TwilioIntegrationTemplate extends SimpleIntegrationTemplat
       String from = getMessagePrefix() + integrationConfiguration.getValue(FROM);
       String to = getMessagePrefix() + integrationConfiguration.getValue(TO);
 
-      requestDiagnostic.put("messageBody", messageBody);
-      requestDiagnostic.put("from", from);
-      requestDiagnostic.put("to", to);
-
-      // Initialize Twilio client
+      requestDiagnostic =createRequestDiagnostic(messageBody,from,to);
       Twilio.init(accountSID, authToken);
 
       // Send the message
@@ -75,11 +72,7 @@ public abstract class TwilioIntegrationTemplate extends SimpleIntegrationTemplat
       final long end = System.currentTimeMillis();
 
       // Collect results
-      result.put("from", from);
-      result.put("to", to);
-      result.put("message",message.getBody());
-      result.put("messageSID", message.getSid());
-      result.put("status", message.getStatus());
+      result = createResultMap(from,to,message);
 
       // Add execution time to diagnostics
       final long executionTime = end - start;

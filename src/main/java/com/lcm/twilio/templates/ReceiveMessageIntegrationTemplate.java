@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.lcm.twilio.templates.utils.Utility.buildErrorResponse;
+import static com.lcm.twilio.templates.utils.Utility.*;
 
 @TemplateId(name = "ReceiveMessageIntegrationTemplate")
 public abstract class ReceiveMessageIntegrationTemplate extends SimpleIntegrationTemplate {
@@ -102,12 +102,7 @@ public abstract class ReceiveMessageIntegrationTemplate extends SimpleIntegratio
                     .map(String::toLowerCase)
                     .collect(Collectors.toList());
 
-            requestDiagnostic.put("to", to);
-            requestDiagnostic.put("startDate", startDateStr);
-            requestDiagnostic.put("startTime", startTimeStr);
-            requestDiagnostic.put("endDate", endDateStr);
-            requestDiagnostic.put("endTime", endTimeStr);
-            requestDiagnostic.put("status", statusFilters);
+            requestDiagnostic =createRequestDiagnostic(to,startDateStr,startTimeStr,endDateStr,endTimeStr,statusFilters);
 
             // Parse dates and times
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -147,14 +142,7 @@ public abstract class ReceiveMessageIntegrationTemplate extends SimpleIntegratio
                         statusFilters.contains(message.getStatus().toString().toLowerCase());
 
                 if (isWithinDateRange && matchesStatus) {
-                    Map<String, Object> messageMap = new HashMap<>();
-                    messageMap.put("messageBody", message.getBody());
-                    messageMap.put("status", message.getStatus());
-                    messageMap.put("sid", message.getSid());
-                    messageMap.put("from", message.getFrom().toString());
-                    messageMap.put("to", message.getTo());
-                    messageMap.put("dateSent", message.getDateSent().toString());
-                    messagesList.add(messageMap);
+                    messagesList.add(createMessageMap(message));
                 }
             }
 

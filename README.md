@@ -1,16 +1,19 @@
-# Twilio Appian Connected System Plugin [![Java CI with Gradle](https://github.com/lowcodemindsglobal/twilio-connector/actions/workflows/gradle.yml/badge.svg?event=push)](https://github.com/lowcodemindsglobal/twilio-connector/actions/workflows/gradle.yml)
+
+---
+
+# Twilio Appian Connected System Plugin
 
 ## Overview
 
-The Twilio Appian Connected System provides integration between Appian and Twilio’s communication services, including SMS and WhatsApp messaging. This connected system allows you to send messages through Twilio's API from within Appian.
+The Twilio Appian Connected System provides integration between Appian and Twilio’s communication services, including SMS and WhatsApp messaging. This connected system allows you to send and receive messages through Twilio's API from within Appian.
 
 ## Configuration
 
 ### Required Dependencies
 
-To work with the Twilio Appian Connected System, you need to include the following dependencies in your build configuration:
+To work with the Twilio Appian Connected System, include the following dependencies in your build configuration:
 
-```groovy
+```gradle
 dependencies {
     // Appian Connected Systems SDK
     compileOnly 'com.appian:connected-systems-core:1.2.0'
@@ -45,29 +48,29 @@ The Twilio connected system requires the following properties to be configured:
 ### Configuration Steps
 
 1. **Create a New Connected System**:
-   - In Appian Designer, navigate to the "Connected Systems" section.
-   - Click on "New Connected System."
+    - In Appian Designer, navigate to the "Connected Systems" section.
+    - Click on "New Connected System."
 
 2. **Set Up the Connected System**:
-   - **Name**: Enter a name for your connected system (e.g., "Twilio Integration").
-   - **Description**: Provide a description of the connected system (e.g., "Integration with Twilio API for sending SMS and WhatsApp messages").
-   - **Category**: Select a category for your connected system.
+    - **Name**: Enter a name for your connected system (e.g., "Twilio Integration").
+    - **Description**: Provide a description of the connected system (e.g., "Integration with Twilio API for sending and receiving SMS and WhatsApp messages").
+    - **Category**: Select a category for your connected system.
 
 3. **Configure Authentication**:
-   - **Account SID**: Add a text property for the Twilio Account SID.
-   - **Auth Token**: Add a text property for the Twilio Auth Token.
+    - **Account SID**: Add a text property for the Twilio Account SID.
+    - **Auth Token**: Add a text property for the Twilio Auth Token.
 
 4. **Add Configuration Properties**:
-   - **Account SID**:
-     - **Property Name**: `accountSID`
-     - **Description**: Your Twilio Account SID.
-     - **Type**: Text
-   - **Auth Token**:
-     - **Property Name**: `authToken`
-     - **Description**: Your Twilio Auth Token.
-     - **Type**: Text
+    - **Account SID**:
+        - Property Name: `accountSID`
+        - Description: Your Twilio Account SID.
+        - Type: Text
+    - **Auth Token**:
+        - Property Name: `authToken`
+        - Description: Your Twilio Auth Token.
+        - Type: Text
 
-5. **Save and Publish** the connected system.
+5. **Save and Publish the connected system**.
 
 ## Integration Templates
 
@@ -77,15 +80,15 @@ The `TwilioIntegrationTemplate` class provides a framework for sending SMS messa
 
 #### Configuration Properties
 
-- **Message** (`msg`): The body of the message to be sent.
-- **From Number** (`from`): The phone number from which the message is sent.
-- **To Number** (`to`): The phone number to which the message is sent.
+- **Message (msg)**: The body of the message to be sent.
+- **From Number (from)**: The phone number from which the message is sent.
+- **To Number (to)**: The phone number to which the message is sent.
 
 #### Methods
 
-- **`getMessagePrefix()`**: Abstract method to be implemented to provide a prefix for the message body.
-- **`getConfiguration(...)`**: Configures the integration properties for sending SMS.
-- **`execute(...)`**: Sends an SMS message using the Twilio API and returns the result or error information.
+- **getMessagePrefix()**: Abstract method to be implemented to provide a prefix for the message body.
+- **getConfiguration(...)**: Configures the integration properties for sending SMS.
+- **execute(...)**: Sends an SMS message using the Twilio API and returns the result or error information.
 
 #### Error Handling
 
@@ -94,7 +97,7 @@ The `TwilioIntegrationTemplate` class provides a framework for sending SMS messa
 
 ### WhatsappIntegrationTemplate
 
-The `WhatsappIntegrationTemplate` class extends `TwilioIntegrationTemplate` to support sending messages via WhatsApp. 
+The `WhatsappIntegrationTemplate` class extends `TwilioIntegrationTemplate` to support sending messages via WhatsApp.
 
 #### Implementation
 
@@ -115,41 +118,67 @@ public class WhatsappIntegrationTemplate extends TwilioIntegrationTemplate {
 
 #### Configuration
 
-- **Message Prefix**: The prefix `"whatsapp:"` is added to the message body to indicate that the message is to be sent via WhatsApp.
+- **Message Prefix**: The prefix "whatsapp:" is added to the message body to indicate that the message is to be sent via WhatsApp.
 
-## Example Usage
+#### Example Usage
 
-### Sending an SMS
+**Sending an SMS**:
+1. Initialize the Twilio Client:
+    - Use the Twilio Account SID and Auth Token from the connected system configuration.
+2. Create a Message:
+    - Use the `Message.creator()` method from the Twilio Java SDK to create and send a message.
+3. Handle Response:
+    - Check the message status and SID for success or error handling.
 
-To send an SMS using the connected system:
+**Sending a WhatsApp Message**:
+1. Initialize the Twilio Client:
+    - Use the Twilio Account SID and Auth Token from the connected system configuration.
+2. Create a WhatsApp Message:
+    - Use the `Message.creator()` method from the Twilio Java SDK with the prefix "whatsapp:" to send a WhatsApp message.
+3. Handle Response:
+    - Check the message status and SID for success or error handling.
+
+### ReceiveMessageIntegrationTemplate
+
+The `ReceiveMessageIntegrationTemplate` class provides a framework for receiving messages via Twilio.
+
+#### Configuration Properties
+
+- **To Number (to)**: The phone number from which to receive messages.
+- **Message Limit (limit)**: The maximum number of messages to retrieve.
+- **Start Date (startDate)**: The start date for filtering messages.
+- **Start Time (startTime)**: The start time for filtering messages.
+- **End Date (endDate)**: The end date for filtering messages.
+- **End Time (endTime)**: The end time for filtering messages.
+- **Status (status)**: Filter messages by status (e.g., 'read', 'undelivered').
+
+#### Methods
+
+- **getMessagePrefix()**: Abstract method to provide a prefix for the message body.
+- **getConfiguration(...)**: Configures the integration properties for receiving messages.
+- **execute(...)**: Retrieves messages from Twilio using the specified filters and returns the result or error information.
+
+#### Example Usage
 
 1. **Initialize the Twilio Client**:
-   - Use the Twilio Account SID and Auth Token from the connected system configuration.
+    - Use the Twilio Account SID and Auth Token from the connected system configuration.
 
-2. **Create a Message**:
-   - Use the `Message.creator()` method from the Twilio Java SDK to create and send a message.
+2. **Retrieve Messages**:
+    - Use the `Message.reader()` method from the Twilio Java SDK to fetch messages based on the specified parameters (e.g., date range, status).
 
-3. **Handle Response**:
-   - Check the message status and SID for success or error handling.
+3. **Filter and Process Messages**:
+    - Apply any additional filtering (e.g., by date, time, or status) and process the retrieved messages as needed.
 
-### Sending a WhatsApp Message
+#### Error Handling
 
-To send a WhatsApp message using the `WhatsappIntegrationTemplate`:
-
-1. **Initialize the Twilio Client**:
-   - Use the Twilio Account SID and Auth Token from the connected system configuration.
-
-2. **Create a WhatsApp Message**:
-   - Use the `Message.creator()` method from the Twilio Java SDK with the prefix `"whatsapp:"` to send a WhatsApp message.
-
-3. **Handle Response**:
-   - Check the message status and SID for success or error handling.
+- **ApiException**: Handles errors from the Twilio API.
+- **Exception**: Handles unexpected errors during execution.
 
 ## Diagnostics
 
 The integration provides diagnostic information including:
 
-- **Execution Time**: Time taken to execute the message sending operation.
+- **Execution Time**: Time taken to execute the message sending or receiving operation.
 - **Request Diagnostic**: Information about the request parameters.
 
 ## Troubleshooting
@@ -161,4 +190,6 @@ The integration provides diagnostic information including:
 ## References
 
 - [Twilio API Documentation](https://www.twilio.com/docs/usage/api)
-- [Appian Connected Systems Documentation](https://docs.appian.com/suite/help/24.2/connected-system-plug-in-landing.html)
+- [Appian Connected Systems Documentation](https://docs.appian.com/suite/help/23.4/Connected_Systems.html)
+
+---
