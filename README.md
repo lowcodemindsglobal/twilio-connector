@@ -10,7 +10,7 @@ The Twilio Appian Connected System provides integration between Appian and Twili
 ![classDigram.png](Docs/classDiagram.png)
 ## Chat Flow Architecture
 ![chat_flow_architecture.png](Docs/chat_flow_architecture.png)
-
+![chatArchitecture.png](Docs/chatArchitecture.png)
 ## OSGI Plugin Architecture
 ![pluginArchitecture.png](Docs/pluginArchitecture.png)
 ### Required Dependencies
