@@ -1,0 +1,66 @@
+@startuml
+
+!define RECTANGLE class
+
+' Define Appian Environment
+rectangle "Appian Environment" {
+    rectangle "Appian Platform" {
+        note right of "Appian Platform"
+          Central platform where plugins are deployed.
+        end note
+    }
+}
+
+' Define OSGi Bundles
+rectangle "Plugin Bundles" {
+    rectangle "Connected System Bundle" {
+        note right of "Connected System Bundle"
+          Manages connections to external systems.
+        end note
+    }
+
+    rectangle "Integration Bundle" {
+        note right of "Integration Bundle"
+          Implements integration logic with external systems.
+        end note
+    }
+
+    rectangle "Configuration" {
+        note right of "Configuration"
+          Stores settings like API keys and endpoints.
+        end note
+    }
+
+    rectangle "Bundle Activator" {
+        note right of "Bundle Activator"
+          Manages the lifecycle of OSGi bundles (start/stop).
+        end note
+    }
+}
+
+' Define Service Interfaces
+rectangle "Service Interfaces" {
+    note right of "Service Interfaces"
+      Define contracts for services provided by bundles.
+    end note
+}
+
+' Define Execution Context
+rectangle "Execution Context" {
+    note right of "Execution Context"
+      Provides runtime environment for actions.
+    end note
+}
+
+' Define interactions
+"Appian Platform" -- "Connected System Bundle" : Uses
+"Appian Platform" -- "Integration Bundle" : Uses
+"Connected System Bundle" -- "Configuration" : Uses
+"Integration Bundle" -- "Configuration" : Uses
+"Connected System Bundle" ..> "Bundle Activator" : Managed by
+"Integration Bundle" ..> "Bundle Activator" : Managed by
+"Integration Bundle" ..> "Execution Context" : Executes within
+"Connected System Bundle" ..> "Service Interfaces" : Interacts with
+"Integration Bundle" ..> "Service Interfaces" : Interacts with
+
+@enduml
