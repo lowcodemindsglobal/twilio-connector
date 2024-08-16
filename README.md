@@ -6,9 +6,13 @@
 ## Overview
 
 The Twilio Appian Connected System provides integration between Appian and Twilio’s communication services, including SMS and WhatsApp messaging. This connected system allows you to send and receive messages through Twilio's API from within Appian.
-
-## Configuration
-
+## Class Diagram
+![classDigram.png](Docs/classDiagram.png)
+## Chat Flow Architecture
+![chat_flow_architecture.png](Docs/chat_flow_architecture.png)
+![chatArchitecture.png](Docs/chatArchitecture.png)
+## OSGI Plugin Architecture
+![pluginArchitecture.png](Docs/pluginArchitecture.png)
 ### Required Dependencies
 
 To work with the Twilio Appian Connected System, include the following dependencies in your build configuration:

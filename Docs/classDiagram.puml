@@ -1,0 +1,61 @@
+@startuml
+
+' Define classes
+class ReceiveMessageIntegrationTemplate {
+    - String TO
+    - String LIMIT
+    - String START_DATE
+    - String START_TIME
+    - String END_DATE
+    - String END_TIME
+    - String STATUS
+    - String getMessagePrefix()
+    + SimpleConfiguration getConfiguration(SimpleConfiguration, SimpleConfiguration, PropertyPath, ExecutionContext)
+    + IntegrationResponse execute(SimpleConfiguration, SimpleConfiguration, ExecutionContext)
+}
+
+class SMSIntegrationTemplate {
+    + String getMessagePrefix()
+}
+
+class ReceiveSMSIntegrationTemplate {
+    + String getMessagePrefix()
+}
+
+class WhatsappIntegrationTemplate {
+    + String getMessagePrefix()
+}
+
+class ReceiveWhatsappMessage {
+    + String getMessagePrefix()
+}
+
+class TwilioConnectedSystemTemplate {
+    - String ACCOUNT_SID
+    - String AUTH_TOKEN
+    + SimpleConfiguration getConfiguration(SimpleConfiguration, ExecutionContext)
+}
+
+class TwilioIntegrationTemplate {
+    - String MESSAGE
+    - String FROM
+    - String TO
+    - String getMessagePrefix()
+    + SimpleConfiguration getConfiguration(SimpleConfiguration, SimpleConfiguration, PropertyPath, ExecutionContext)
+    + IntegrationResponse execute(SimpleConfiguration, SimpleConfiguration, ExecutionContext)
+}
+
+' Define relationships
+ReceiveMessageIntegrationTemplate <|-- SMSIntegrationTemplate
+ReceiveMessageIntegrationTemplate <|-- ReceiveSMSIntegrationTemplate
+ReceiveMessageIntegrationTemplate <|-- ReceiveWhatsappMessage
+TwilioIntegrationTemplate <|-- SMSIntegrationTemplate
+TwilioIntegrationTemplate <|-- WhatsappIntegrationTemplate
+TwilioConnectedSystemTemplate -- TwilioIntegrationTemplate : Provides credentials
+
+' Add note
+note right of ReceiveMessageIntegrationTemplate
+  Abstract base class for receiving messages
+end note
+
+@enduml

@@ -44,9 +44,9 @@ public abstract class ReceiveMessageIntegrationTemplate extends SimpleIntegratio
             PropertyPath propertyPath,
             ExecutionContext executionContext) {
         return integrationConfiguration.setProperties(
-                textProperty(TO).label("To Number")
+                textProperty(TO).label("To Numbers (Comma-Separated)")
                         .isRequired(true).isExpressionable(true)
-                        .description("The phone number to which the messages are received")
+                        .description("Comma-separated list of phone numbers to which messages are received")
                         .build(),
                 integerProperty(LIMIT).label("Message Limit")
                         .isRequired(true).isExpressionable(true)
@@ -102,7 +102,13 @@ public abstract class ReceiveMessageIntegrationTemplate extends SimpleIntegratio
                     .map(String::toLowerCase)
                     .collect(Collectors.toList());
 
-            requestDiagnostic =createRequestDiagnostic(to,startDateStr,startTimeStr,endDateStr,endTimeStr,statusFilters);
+            // Parse phone numbers
+            List<String> phoneNumbers = Arrays.stream(to.split("\\s*,\\s*"))
+                    .map(String::trim)
+                    .collect(Collectors.toList());
+
+
+            requestDiagnostic = createRequestDiagnostic(phoneNumbers.toString(), startDateStr, startTimeStr, endDateStr, endTimeStr, statusFilters);
 
             // Parse dates and times
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -123,30 +129,37 @@ public abstract class ReceiveMessageIntegrationTemplate extends SimpleIntegratio
 
             // Receive the messages
             final long start = System.currentTimeMillis();
-            ResourceSet<Message> messages = Message.reader()
-                    .setTo(new PhoneNumber(getMessagePrefix() + to))
-                    .limit(noOfMessages)
-                    .read();
+            List<Map<String, Object>> allMessages = new ArrayList<>();
 
-            // Manual filtering of messages
-            List<Map<String, Object>> messagesList = new ArrayList<>();
-            for (Message message : messages) {
-                Instant messageDateSent = message.getDateSent().toInstant();
+            for (String phoneNumber : phoneNumbers) {
+                // Receive the messages
+                ResourceSet<Message> messages = Message.reader()
+                        .setTo(new PhoneNumber(getMessagePrefix() + phoneNumber))
+                        .limit(noOfMessages)
+                        .read();
 
-                // Filter based on date and time
-                boolean isWithinDateRange = (startInstant == null || !messageDateSent.isBefore(startInstant)) &&
-                        (endInstant == null || !messageDateSent.isAfter(endInstant));
+                // Manual filtering of messages
+                List<Map<String, Object>> messagesList = new ArrayList<>();
+                for (Message message : messages) {
+                    Instant messageDateSent = message.getDateSent().toInstant();
 
-                // Filter based on status
-                boolean matchesStatus = statusFilters.isEmpty() ||
-                        statusFilters.contains(message.getStatus().toString().toLowerCase());
+                    // Filter based on date and time
+                    boolean isWithinDateRange = (startInstant == null || !messageDateSent.isBefore(startInstant)) &&
+                            (endInstant == null || !messageDateSent.isAfter(endInstant));
 
-                if (isWithinDateRange && matchesStatus) {
-                    messagesList.add(createMessageMap(message));
+                    // Filter based on status
+                    boolean matchesStatus = statusFilters.isEmpty() ||
+                            statusFilters.contains(message.getStatus().toString().toLowerCase());
+
+                    if (isWithinDateRange && matchesStatus) {
+                        messagesList.add(createMessageMap(message));
+                    }
                 }
+
+                allMessages.addAll(messagesList);
             }
 
-            result.put("Messages", messagesList);
+            result.put("Messages", allMessages);
 
             final long end = System.currentTimeMillis();
             final long executionTime = end - start;

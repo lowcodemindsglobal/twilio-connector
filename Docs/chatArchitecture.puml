@@ -1,0 +1,75 @@
+@startuml
+
+!define RECTANGLE class
+
+' Define Appian Environment
+rectangle "Appian Platform" {
+    rectangle "Appian Environment" {
+        note right of "Appian Environment"
+          Central platform for deploying and executing integrations.
+        end note
+    }
+}
+
+' Define Twilio Service
+rectangle "Twilio Service" {
+    rectangle "Twilio API" {
+        note right of "Twilio API"
+          Handles SMS and WhatsApp messaging.
+        end note
+    }
+}
+
+' Define Twilio Plugin Bundle
+rectangle "Twilio Plugin" {
+    rectangle "Twilio Connected System Bundle" {
+        note right of "Twilio Connected System Bundle"
+          Configures connection settings to Twilio.
+        end note
+    }
+
+    rectangle "SMS Integration Bundle" {
+        note right of "SMS Integration Bundle"
+          Handles sending and receiving SMS messages.
+        end note
+    }
+
+    rectangle "WhatsApp Integration Bundle" {
+        note right of "WhatsApp Integration Bundle"
+          Handles sending and receiving WhatsApp messages.
+        end note
+    }
+
+    rectangle "Configuration" {
+        note right of "Configuration"
+          Stores API keys, endpoints, and other settings.
+        end note
+    }
+
+    rectangle "Execution Context" {
+        note right of "Execution Context"
+          Provides runtime environment for executing actions.
+        end note
+    }
+}
+
+' Define Service Interfaces
+rectangle "Service Interfaces" {
+    note right of "Service Interfaces"
+      Defines contracts for communication between Appian and Twilio services.
+    end note
+}
+
+' Define interactions
+"Appian Environment" -- "Twilio Plugin" : Uses
+"Twilio Plugin" -- "Twilio Connected System Bundle" : Configures connection
+"Twilio Plugin" -- "SMS Integration Bundle" : Sends/Receives SMS
+"Twilio Plugin" -- "WhatsApp Integration Bundle" : Sends/Receives WhatsApp
+"Twilio Plugin" -- "Configuration" : Uses
+"Twilio Plugin" -- "Execution Context" : Executes within
+"SMS Integration Bundle" ..> "Service Interfaces" : Interacts with
+"WhatsApp Integration Bundle" ..> "Service Interfaces" : Interacts with
+"Twilio Connected System Bundle" ..> "Service Interfaces" : Interacts with
+"Twilio API" ..> "Service Interfaces" : Provides SMS/WhatsApp services
+
+@enduml
