@@ -18,7 +18,7 @@ import java.util.Map;
 import static com.lcm.twilio.templates.utils.Utility.*;
 
 @TemplateId(name = "SendWhatsappMessageWithAttachment")
-public class SendWhatsappMessageWithAttachment extends TwilioIntegrationTemplate {
+public class SendWhatsappMessageWithTemplate extends TwilioIntegrationTemplate {
 
     public static final String MESSAGE = "msg";
     public static final String FROM = "from";
@@ -80,7 +80,7 @@ public class SendWhatsappMessageWithAttachment extends TwilioIntegrationTemplate
 
             // Create and send the message with or without attachment
             Message message = Message.creator(new PhoneNumber(to), new PhoneNumber(from), messageBody)
-                    .setMediaUrl(mediaUrl != null && !mediaUrl.isEmpty() ? mediaUrl : null)
+//                    .setMediaUrl(mediaUrl != null && !mediaUrl.isEmpty() ? mediaUrl : null)
                     .create();
 
             // Collect results
