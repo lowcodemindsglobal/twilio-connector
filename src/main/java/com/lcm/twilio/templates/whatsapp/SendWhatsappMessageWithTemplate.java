@@ -23,7 +23,7 @@ public class SendWhatsappMessageWithTemplate extends TwilioIntegrationTemplate {
     public static final String MESSAGE = "msg";
     public static final String FROM = "from";
     public static final String TO = "to";
-    public static final String MEDIA_URL = "mediaUrl";
+    public static final String TEMPLATE_ID = "templateId";
 
     @Override
     protected String getMessagePrefix() {
@@ -49,9 +49,9 @@ public class SendWhatsappMessageWithTemplate extends TwilioIntegrationTemplate {
                         .isRequired(true).isExpressionable(true)
                         .description("Phone number to which the message is sent")
                         .build(),
-                textProperty(MEDIA_URL).label("Media URL")
+                textProperty(TEMPLATE_ID).label("Template Id")
                         .isRequired(false).isExpressionable(true)
-                        .description("URL of the media to be attached to the message")
+                        .description("Template Id to send for the message Template")
                         .build()
         );
     }
@@ -70,17 +70,16 @@ public class SendWhatsappMessageWithTemplate extends TwilioIntegrationTemplate {
             String messageBody = integrationConfiguration.getValue(MESSAGE);
             String from = getMessagePrefix() + integrationConfiguration.getValue(FROM);
             String to = getMessagePrefix() + integrationConfiguration.getValue(TO);
-            String mediaUrl = integrationConfiguration.getValue(MEDIA_URL);
+            String templateId = integrationConfiguration.getValue(TEMPLATE_ID);
 
-            requestDiagnostic = createRequestDiagnosticWithMedia(messageBody,from,to,mediaUrl);
+            requestDiagnostic = createRequestDiagnostic(messageBody,from,to);
 
             // Initialize Twilio client
             Twilio.init(accountSID, authToken);
             final long start = System.currentTimeMillis();
 
             // Create and send the message with or without attachment
-            Message message = Message.creator(new PhoneNumber(to), new PhoneNumber(from), messageBody)
-//                    .setMediaUrl(mediaUrl != null && !mediaUrl.isEmpty() ? mediaUrl : null)
+            Message message = Message.creator(new PhoneNumber(to), new PhoneNumber(from), messageBody).setContentSid(templateId)
                     .create();
 
             // Collect results
