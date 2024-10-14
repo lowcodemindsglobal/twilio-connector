@@ -37,6 +37,7 @@ public class Utility {
         result.put("messageSID", message.getSid());
         result.put("numMedia", message.getNumMedia());
         result.put("status", message.getStatus());
+        result.put("dateSent", message.getDateSent());
         return result;
     }
     public static Map<String, Object> createRequestDiagnostic(String messageBody, String from, String to) {

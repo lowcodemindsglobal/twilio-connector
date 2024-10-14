@@ -24,7 +24,7 @@ public class SendWhatsappMessageWithTemplate extends TwilioIntegrationTemplate {
     public static final String FROM = "from";
     public static final String TO = "to";
     public static final String TEMPLATE_ID = "templateId";
-
+    public static final String VARIABLES = "variables";
     @Override
     protected String getMessagePrefix() {
         return "whatsapp:"; // No prefix for this example, but you can set one if needed.
@@ -52,6 +52,10 @@ public class SendWhatsappMessageWithTemplate extends TwilioIntegrationTemplate {
                 textProperty(TEMPLATE_ID).label("Template Id")
                         .isRequired(false).isExpressionable(true)
                         .description("Template Id to send for the message Template")
+                        .build(),
+                textProperty(VARIABLES).label("Variables")
+                        .isRequired(false).isExpressionable(true)
+                        .description("Variables can be referenced in templates")
                         .build()
         );
     }
@@ -71,6 +75,7 @@ public class SendWhatsappMessageWithTemplate extends TwilioIntegrationTemplate {
             String from = getMessagePrefix() + integrationConfiguration.getValue(FROM);
             String to = getMessagePrefix() + integrationConfiguration.getValue(TO);
             String templateId = integrationConfiguration.getValue(TEMPLATE_ID);
+            String variables = integrationConfiguration.getValue(VARIABLES);
 
             requestDiagnostic = createRequestDiagnostic(messageBody,from,to);
 
@@ -79,7 +84,7 @@ public class SendWhatsappMessageWithTemplate extends TwilioIntegrationTemplate {
             final long start = System.currentTimeMillis();
 
             // Create and send the message with or without attachment
-            Message message = Message.creator(new PhoneNumber(to), new PhoneNumber(from), messageBody).setContentSid(templateId)
+            Message message = Message.creator(new PhoneNumber(to), new PhoneNumber(from), messageBody).setContentSid(templateId).setContentVariables(variables)
                     .create();
 
             // Collect results
