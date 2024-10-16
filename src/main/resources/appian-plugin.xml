@@ -20,5 +20,9 @@
                           class="com.lcm.twilio.templates.whatsapp.ReceiveWhatsappMessage" />
     <integration-template key="SendWhatsappMessageWithTemplate" name="SendWhatsappMessageWithTemplate"
                           class="com.lcm.twilio.templates.whatsapp.SendWhatsappMessageWithTemplate" />
+    <integration-template key="ReceiveSMSBySID" name="ReceiveSMSBySID"
+                          class="com.lcm.twilio.templates.sms.ReceiveSMSBySID" />
+    <integration-template key="ReceiveWhatsappMessageBySID" name="ReceiveWhatsappMessageBySID"
+                          class="com.lcm.twilio.templates.whatsapp.ReceiveWhatsappMessageBySID" />
   </connected-system-template>
 </appian-plugin>

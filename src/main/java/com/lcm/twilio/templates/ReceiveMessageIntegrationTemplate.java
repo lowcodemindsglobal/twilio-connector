@@ -100,12 +100,12 @@ public abstract class ReceiveMessageIntegrationTemplate extends SimpleIntegratio
                     ? new ArrayList<>()
                     : Arrays.stream(statusStr.split("\\s*,\\s*"))
                     .map(String::toLowerCase)
-                    .toList();
+                    .collect(Collectors.toList());
 
             // Parse phone numbers
             List<String> phoneNumbers = Arrays.stream(to.split("\\s*,\\s*"))
                     .map(String::trim)
-                    .toList();
+                    .collect(Collectors.toList());
 
 
             requestDiagnostic = createRequestDiagnostic(phoneNumbers.toString(), startDateStr, startTimeStr, endDateStr, endTimeStr, statusFilters);

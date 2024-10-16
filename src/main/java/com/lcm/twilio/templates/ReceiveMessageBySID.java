@@ -13,8 +13,6 @@ import com.twilio.exception.ApiException;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 
-import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.lcm.twilio.templates.utils.Utility.*;
