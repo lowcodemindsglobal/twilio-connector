@@ -16,7 +16,7 @@ import java.util.Map;
 
 import static com.lcm.twilio.templates.utils.Utility.*;
 
-public abstract class TwilioIntegrationTemplate extends SimpleIntegrationTemplate {
+public abstract class SendMessageIntegrationTemplate extends SimpleIntegrationTemplate {
 
   public static final String MESSAGE = "msg";
   public static final String FROM = "from";

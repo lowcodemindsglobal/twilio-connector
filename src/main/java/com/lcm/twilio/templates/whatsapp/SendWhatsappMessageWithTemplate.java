@@ -7,7 +7,7 @@ import com.appian.connectedsystems.templateframework.sdk.TemplateId;
 import com.appian.connectedsystems.templateframework.sdk.configuration.PropertyPath;
 import com.appian.connectedsystems.templateframework.sdk.diagnostics.IntegrationDesignerDiagnostic;
 import com.lcm.twilio.templates.TwilioConnectedSystemTemplate;
-import com.lcm.twilio.templates.TwilioIntegrationTemplate;
+import com.lcm.twilio.templates.SendMessageIntegrationTemplate;
 import com.twilio.Twilio;
 import com.twilio.exception.ApiException;
 import com.twilio.rest.api.v2010.account.Message;
@@ -17,8 +17,8 @@ import java.util.Map;
 
 import static com.lcm.twilio.templates.utils.Utility.*;
 
-@TemplateId(name = "SendWhatsappMessageWithAttachment")
-public class SendWhatsappMessageWithTemplate extends TwilioIntegrationTemplate {
+@TemplateId(name = "SendWhatsappMessageWithTemplate")
+public class SendWhatsappMessageWithTemplate extends SendMessageIntegrationTemplate {
 
     public static final String FROM = "from";
     public static final String TO = "to";
