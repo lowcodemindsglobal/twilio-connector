@@ -37,12 +37,19 @@ public class Utility {
         result.put("messageSID", message.getSid());
         result.put("numMedia", message.getNumMedia());
         result.put("status", message.getStatus());
+        result.put("dateSent", message.getDateSent());
         return result;
     }
     public static Map<String, Object> createRequestDiagnostic(String messageBody, String from, String to) {
         Map<String, Object> map = new HashMap<>();
         map.put("messageBody", messageBody);
         map.put("from", from);
+        map.put("to", to);
+        return map;
+    }
+    public static Map<String, Object> createRequestDiagnostic(String to, String sid) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("sid", sid);
         map.put("to", to);
         return map;
     }
