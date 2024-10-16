@@ -47,6 +47,12 @@ public class Utility {
         map.put("to", to);
         return map;
     }
+    public static Map<String, Object> createRequestDiagnostic(String to, String sid) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("sid", sid);
+        map.put("to", to);
+        return map;
+    }
     public static Map<String, Object> createRequestDiagnostic(
             String to, String startDateStr, String startTimeStr,
             String endDateStr, String endTimeStr, List<String> statusFilters) {

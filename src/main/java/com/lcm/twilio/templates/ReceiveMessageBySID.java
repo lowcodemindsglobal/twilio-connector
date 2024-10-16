@@ -1,33 +1,31 @@
-package com.lcm.twilio.templates.whatsapp;
+package com.lcm.twilio.templates;
 
+import com.appian.connectedsystems.simplified.sdk.SimpleIntegrationTemplate;
 import com.appian.connectedsystems.simplified.sdk.configuration.SimpleConfiguration;
 import com.appian.connectedsystems.templateframework.sdk.ExecutionContext;
 import com.appian.connectedsystems.templateframework.sdk.IntegrationResponse;
 import com.appian.connectedsystems.templateframework.sdk.TemplateId;
 import com.appian.connectedsystems.templateframework.sdk.configuration.PropertyPath;
 import com.appian.connectedsystems.templateframework.sdk.diagnostics.IntegrationDesignerDiagnostic;
-import com.lcm.twilio.templates.TwilioConnectedSystemTemplate;
-import com.lcm.twilio.templates.TwilioIntegrationTemplate;
 import com.twilio.Twilio;
+import com.twilio.base.ResourceSet;
 import com.twilio.exception.ApiException;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 import static com.lcm.twilio.templates.utils.Utility.*;
 
-@TemplateId(name = "SendWhatsappMessageWithAttachment")
-public class SendWhatsappMessageWithTemplate extends TwilioIntegrationTemplate {
+@TemplateId(name = "ReceiveMessageBySID")
+public abstract class ReceiveMessageBySID extends SimpleIntegrationTemplate {
 
-    public static final String FROM = "from";
     public static final String TO = "to";
-    public static final String TEMPLATE_ID = "templateId";
-    public static final String VARIABLES = "variables";
-    @Override
-    protected String getMessagePrefix() {
-        return "whatsapp:"; // No prefix for this example, but you can set one if needed.
-    }
+    public static final String SID = "sid";
+
+    protected abstract String getMessagePrefix();
 
     @Override
     protected SimpleConfiguration getConfiguration(
@@ -36,21 +34,13 @@ public class SendWhatsappMessageWithTemplate extends TwilioIntegrationTemplate {
             PropertyPath propertyPath,
             ExecutionContext executionContext) {
         return integrationConfiguration.setProperties(
-                textProperty(FROM).label("From Number")
-                        .isRequired(true).isExpressionable(true)
-                        .description("Phone number from which the message is sent")
-                        .build(),
                 textProperty(TO).label("To Number")
                         .isRequired(true).isExpressionable(true)
-                        .description("Phone number to which the message is sent")
+                        .description("phone number to ch messages are sent")
                         .build(),
-                textProperty(TEMPLATE_ID).label("Template Id")
-                        .isRequired(false).isExpressionable(true)
-                        .description("Template Id to send for the message Template")
-                        .build(),
-                textProperty(VARIABLES).label("Variables")
-                        .isRequired(false).isExpressionable(true)
-                        .description("Variables can be referenced in templates")
+                textProperty(SID).label("String Identifier")
+                        .isRequired(true).isExpressionable(true)
+                        .description("")
                         .build()
         );
     }
@@ -61,33 +51,33 @@ public class SendWhatsappMessageWithTemplate extends TwilioIntegrationTemplate {
             SimpleConfiguration connectedSystemConfiguration,
             ExecutionContext executionContext) {
         Map<String, Object> requestDiagnostic = new HashMap<>();
-        Map<String, Object> result;
+        Map<String, Object> result = new HashMap<>();
 
         try {
             String accountSID = connectedSystemConfiguration.getValue(TwilioConnectedSystemTemplate.ACCOUNT_SID);
             String authToken = connectedSystemConfiguration.getValue(TwilioConnectedSystemTemplate.AUTH_TOKEN);
-            String from = getMessagePrefix() + integrationConfiguration.getValue(FROM);
-            String to = getMessagePrefix() + integrationConfiguration.getValue(TO);
-            String templateId = integrationConfiguration.getValue(TEMPLATE_ID);
-            String variables = integrationConfiguration.getValue(VARIABLES);
-
-            requestDiagnostic = createRequestDiagnostic(templateId,from,to);
+            String to = integrationConfiguration.getValue(TO);
+            String sid = integrationConfiguration.getValue(SID);
+            requestDiagnostic = createRequestDiagnostic(to, sid);
 
             // Initialize Twilio client
             Twilio.init(accountSID, authToken);
+
+            // Receive the messages
             final long start = System.currentTimeMillis();
+            ResourceSet<Message> messages = Message.reader()
+                    .setTo(new PhoneNumber(getMessagePrefix() + to))
+                    .read();
+            for (Message message : messages) {
+                if (message.getSid().equals(sid)) {
+                    result.put("Message", message);
+                    break;
+                }
+            }
 
-            // Create and send the message with or without attachment
-            Message message = Message.creator(new PhoneNumber(to), new PhoneNumber(from), templateId)
-                    .setContentSid(templateId)
-                    .setContentVariables(variables)
-                    .create();
 
-            // Collect results
-            result = createResultMap(from,to,message);
-
-            // Add execution time to diagnostics
-            final long executionTime = System.currentTimeMillis() - start;
+            final long end = System.currentTimeMillis();
+            final long executionTime = end - start;
             final IntegrationDesignerDiagnostic diagnostic = IntegrationDesignerDiagnostic.builder()
                     .addExecutionTimeDiagnostic(executionTime)
                     .addRequestDiagnostic(requestDiagnostic)
@@ -103,4 +93,5 @@ public class SendWhatsappMessageWithTemplate extends TwilioIntegrationTemplate {
             return buildErrorResponse("Unexpected error", e.getMessage(), requestDiagnostic);
         }
     }
+
 }
