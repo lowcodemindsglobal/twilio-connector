@@ -25,6 +25,7 @@ dependencies {
 
     // Twilio Java SDK
     implementation 'com.twilio.sdk:twilio:10.4.1'
+    implementation 'commons-io:commons-io:2.14.0'
 
     // Jackson libraries for JSON and XML processing
     implementation 'com.fasterxml.jackson.core:jackson-core:2.17.2'
