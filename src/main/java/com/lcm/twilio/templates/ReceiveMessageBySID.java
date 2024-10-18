@@ -68,7 +68,10 @@ public abstract class ReceiveMessageBySID extends SimpleIntegrationTemplate {
                     .read();
             for (Message message : messages) {
                 if (message.getSid().equals(sid)) {
-                    result.put("Message", message);
+                    result.put("Sid", message.getSid());
+                    result.put("Body", message.getBody());
+                    result.put("DateSent", message.getDateSent());
+                    result.put("Status", message.getStatus());
                     break;
                 }
             }
