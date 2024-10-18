@@ -3,17 +3,17 @@
   <plugin-info>
     <description>LCM Connected System - Twilio</description>
     <vendor name="Low Code Minds" url="www.lowcodeminds.com" />
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <application-version min="23.3" />
   </plugin-info>
 
   <connected-system-template key="TwilioConnectedSystemTemplate" name="TwilioConnectedSystemTemplate"
                              class="com.lcm.twilio.templates.TwilioConnectedSystemTemplate">
 
-    <integration-template key="SMSIntegrationTemplate" name="SMSIntegrationTemplate"
-                          class="com.lcm.twilio.templates.sms.SMSIntegrationTemplate" />
-    <integration-template key="WhatsappIntegrationTemplate" name="WhatsappIntegrationTemplate"
-                          class="com.lcm.twilio.templates.whatsapp.WhatsappIntegrationTemplate" />
+    <integration-template key="SendSMSIntegrationTemplate" name="SendSMSIntegrationTemplate"
+                          class="com.lcm.twilio.templates.sms.SendSMSIntegrationTemplate" />
+    <integration-template key="SendWhatsappIntegrationTemplate" name="SendWhatsappIntegrationTemplate"
+                          class="com.lcm.twilio.templates.whatsapp.SendWhatsappIntegrationTemplate" />
     <integration-template key="ReceiveSMSIntegrationTemplate" name="ReceiveSMSIntegrationTemplate"
                           class="com.lcm.twilio.templates.sms.ReceiveSMSIntegrationTemplate" />
     <integration-template key="ReceiveWhatsappMessage" name="ReceiveWhatsappMessage"

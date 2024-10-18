@@ -1,10 +1,10 @@
 package com.lcm.twilio.templates.sms;
 
 import com.appian.connectedsystems.templateframework.sdk.TemplateId;
-import com.lcm.twilio.templates.TwilioIntegrationTemplate;
+import com.lcm.twilio.templates.SendMessageIntegrationTemplate;
 
-@TemplateId(name = "SMSIntegrationTemplate")
-public class SMSIntegrationTemplate extends TwilioIntegrationTemplate {
+@TemplateId(name = "SendSMSIntegrationTemplate")
+public class SendSMSIntegrationTemplate extends SendMessageIntegrationTemplate {
 
   @Override
   protected String getMessagePrefix() {
